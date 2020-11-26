@@ -12,20 +12,18 @@ echo "$INPUT_SERVICE_PARAMS"
 if [[ -n "$INPUT_OPENSHIFT_TOKEN" ]];
 then
   echo "Using OpenShfit Token to login"
-  oc login --token="$INPUT_OPENSHIFT_TOKEN" \
-    "$INPUT_K8S_API_SERVER_URL"
+  oc login --insecure-skip-tls-verify "$INPUT_K8S_API_SERVER_URL" \
+    --token="$INPUT_OPENSHIFT_TOKEN"
 else 
   echo "Using OpenShfit Username and Password to login"
-  oc login --username="$INPUT_OPENSHIFT_USERNAME" \
-     --password="$INPUT_OPENSHIFT_PASSWORD" \
-     --insecure-skip-tls-verify \
-     "$INPUT_K8S_API_SERVER_URL"
+  oc login --insecure-skip-tls-verify "$INPUT_K8S_API_SERVER_URL" \
+     --username="$INPUT_OPENSHIFT_USERNAME" \
+     --password="$INPUT_OPENSHIFT_PASSWORD"
 fi
 
 echo "Creating Knative Service $INPUT_SERVICE_NAME"
 kn service "$INPUT_SERVICE_OPERATION" "$INPUT_SERVICE_NAME" \
    --namespace="$INPUT_SERVICE_NAMESPACE" \
-   --insecure-skip-tls-verify \
    --image="$INPUT_CONTAINER_IMAGE"
 
 # Set the output 
