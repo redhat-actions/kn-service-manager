@@ -34,8 +34,8 @@ inputs:
     description: 'The extra parameter to pass to service'
     required: false
 outputs:
-  service_info:
-    description: "The Knative Service Info"
+  service_url:
+    description: "The Knative Service URL"
 runs:
   using: 'docker'
   image: 'Dockerfile'

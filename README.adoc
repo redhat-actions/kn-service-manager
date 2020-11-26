@@ -1,12 +1,56 @@
 = Knative Client Service Action
 
-Using https://github.com/knative/client[kn] to deploy the Knative Serive
+Using https://github.com/knative/client[kn] to deploy the Knative Service.
+
+== Pre-requisites
+
+Kubernetes Cluster with Knative, if you dont have an OpenShift cluster get one spinned instantly via https://try.openshift.com[try.openshift.com].
 
 == Parameters
 
 The action has the following parameters:
+
+.Inputs
+[cols="1,2,1", options="header"]
+|===
+| Name | Description | Default
+| k8s_api_server_url | The Kube API Server URL |
+| openshift_token | The OpenShift Login Token |
+| openshift_user | The OpenShift Login User |
+| openshift_password | The OpenShift Login User Password |
+| service_name | The Knative Service Name |
+| service_namespace | The Kubernetes Namespace to deploy to | default
+| service_operation | The `kn` service operation *create*, *update*, *delete* etc., | create
+| container_image | The container image to use for service |
+| service_params | The extra service parameters to pass to the service |
+|===
  
+The Action returns the Knative Service URL as output, with output variable name as `service_url`.
+
 == How to add to your action
+
+- Create the following https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets[GitHub Secrets] in your GitHub repository:
+
+- Container registry access e.g GitHub Container Registry where you push built images.
+
+[IMPORTANT]
+====
+Since this action is development phase, it allows `--insecure-skip-tls-verify` flag to OpenShift login. I will be removed in upcoming releases.
+====
+
+As the examples show using GitHub Container registry create the following secret and add to your repository:
+
+`GHCR_PAT` - The https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token[GithHub PAT] to allow pushing built image into GitHub Container registry 
+
+As OpenShift is used a the Kubernetes platform in the example, add the following secret to your repository:
+
+- `OPENSHIFT_SERVER_URL` - The OpenShift API server url, can be retrieved using `oc whoami --show-server`
+
+=== With OpenShift Token
+
+Add the following GitHub Secret to your repository:
+
+- `OPENSHIFT_TOKEN` -  The OpenShift User authenetication token, can be retrieved using `oc whoami -t`.
 
 [source,yaml]
 ----
@@ -16,6 +60,27 @@ The action has the following parameters:
   with: 
     k8s_api_server_url: "${{ secrets.OPENSHIFT_SERVER_URL }}"
     openshift_token: "${{ secrets.OPENSHIFT_TOKEN }}"
+    service_name: fruits-app
+    service_namespace: demos
+    container_image: "ghcr.io/kameshsampath/fruits-app@${{ steps.docker_build_push.outputs.digest }}"
+----
+
+=== With OpenShift Username and Password
+
+Add the following GitHub Secrets to your repository:
+
+- `OPENSHIFT_USER`     -  The OpenShift User to authenticate.
+- `OPENSHIFT_PASSWORD` -  The OpenShift User to authenticate.
+
+[source,yaml]
+----
+- name: Knative Service Deploy
+  id: kn_service_deploy
+  uses: kameshsampath/kn-service-action
+  with: 
+    k8s_api_server_url: "${{ secrets.OPENSHIFT_SERVER_URL }}"
+    openshift_user: "${{ secrets.OPENSHIFT_USERNAME }}"
+    openshift_password: "${{ secrets.OPENSHIFT_PASSWORD }}"
     service_name: fruits-app
     service_namespace: demos
     container_image: "ghcr.io/kameshsampath/fruits-app@${{ steps.docker_build_push.outputs.digest }}"

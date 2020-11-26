@@ -22,10 +22,18 @@ else
 fi
 
 echo "Creating Knative Service $INPUT_SERVICE_NAME"
-kn service "$INPUT_SERVICE_OPERATION" "$INPUT_SERVICE_NAME" \
+
+if [[ "create" == "$INPUT_SERVICE_OPERATION" ]];
+then
+kn service "$INPUT_SERVICE_OPERATION" --force "$INPUT_SERVICE_NAME" \
    --namespace="$INPUT_SERVICE_NAMESPACE" \
    --image="$INPUT_CONTAINER_IMAGE"
+else
+kn service "$INPUT_SERVICE_OPERATION"  "$INPUT_SERVICE_NAME" \
+   --namespace="$INPUT_SERVICE_NAMESPACE" \
+   --image="$INPUT_CONTAINER_IMAGE"
+fi
 
 # Set the output 
-service_info=$(kn service describe --namespace="$INPUT_SERVICE_NAMESPACE" "$INPUT_SERVICE_NAME")
-echo "::set-output name=service_info::$service_info"
+service_url=$(kn service describe --namespace="$INPUT_SERVICE_NAMESPACE" "$INPUT_SERVICE_NAME" -o url)
+echo "::set-output name=service_url::$service_url"
