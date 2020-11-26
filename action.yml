@@ -1,0 +1,48 @@
+name: "Knative Client Service"
+description: "Creating Knative Services using kn"
+branding:
+  icon: book-open
+  color: yellow
+inputs:
+  k8s_api_server_url:
+    description: 'The Kube API Server URL'
+    required: true
+  openshift_token:
+    description: 'The OpenShift Login Token'
+    required: false
+  openshift_user:
+    description: 'The OpenShift Login User'
+    required: false
+  openshift_password:
+    description: 'The OpenShift Login User Password'
+    required: false
+  service_name:
+    description: "The Knative Service Name"
+    required: true
+  service_namespace:
+    description: "The Kubernetes Namespace to deploy to "
+    required: false
+    default: "default"
+  service_operation:
+    description: 'The Knative Service Operation'
+    required: false
+    default: "create"
+  container_image:
+    description: 'The Knative Serivce Image'
+    required: true
+  service_params:
+    description: 'The extra parameter to pass to service'
+    required: false
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+     - ${{ k8s_api_server_url }}
+     - ${{ openshift_token }}
+     - ${{ openshift_user }}
+     - ${{ openshift_password }}
+     - ${{ service_name }}
+     - ${{ service_namespace }}
+     - ${{ service_operation }}
+     - ${{ container_image }}
+     - ${{ service_params }}

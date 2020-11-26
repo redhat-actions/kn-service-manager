@@ -1,0 +1,24 @@
+= Knative Client Service Action
+
+Using https://github.com/knative/client[kn] to deploy the Knative Serive
+
+== Parameters
+
+The action has the following parameters:
+ 
+== How to add to your action
+
+[source,yaml]
+----
+- name: Knative Service Deploy
+  id: kn_service_deploy
+  uses: kameshsampath/kn-service-action
+  with: 
+    k8s_api_server_url: "${{ secrets.OPENSHIFT_SERVER_URL }}"
+    openshift_token: "${{ secrets.OPENSHIFT_TOKEN }}"
+    service_name: fruits-app
+    service_namespace: demos
+    container_image: "ghcr.io/kameshsampath/fruits-app@${{ steps.docker_build_push.outputs.digest }}"
+----
+
+For a complete example is available https://github.com/kameshsampath/fruits-app[here].
