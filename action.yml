@@ -33,6 +33,16 @@ inputs:
   service_params:
     description: 'The extra parameter to pass to service'
     required: false
+  private_registry:
+    description: 'Whether the image is pushed to private registry'
+    required: false
+    default: "yes"
+  registry_user:
+    description: 'The registry user to use to create image pull secret'
+    required: false
+  registry_password:
+    description: 'The registry user credentials'
+    required: false
 outputs:
   service_url:
     description: "The Knative Service URL"
@@ -49,3 +59,6 @@ runs:
      - ${{ inputs.service_operation }}
      - ${{ inputs.container_image }}
      - ${{ inputs.service_params }}
+     - ${{ inputs.private_registry }}
+     - ${{ inputs.registry_user }}
+     - ${{ inputs.registry_password }}
