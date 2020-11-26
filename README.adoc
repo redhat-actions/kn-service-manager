@@ -1,6 +1,8 @@
 = Knative Client Service Action
 
-Using https://github.com/knative/client[kn] to deploy the Knative Service.
+image::https://github.com/kameshsampath/kn-service-action/workflows/CI/badge.svg?style=svg&branch=master[CI]
+
+GitHub Action to deploy https://kn.dev[Knative Service] using https://github.com/knative/client[Knative Client].
 
 == Pre-requisites
 
