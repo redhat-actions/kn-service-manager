@@ -23,3 +23,7 @@ echo "Creating Knative Service $SERVICE_NAME"
 kn service "$SERVICE_OPERATION" "$SERVICE_NAME" \
    --namespace="$SERVICE_NAMESPACE" \
    --image="$CONTAINER_IMAGE"
+
+# Set the output 
+service_info=$(kn service describe --namespace="$SERVICE_NAMESPACE" "$SERVICE_NAME")
+echo "::set-output name=service_info::$service_info"
