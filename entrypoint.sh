@@ -38,7 +38,7 @@ if [[ $INPUT_PRIVATE_REGISTRY == "yes" ]] || [[ $INPUT.PRIVATE_REGISTRY == "true
 then
  # delete the old secret if exist, that ensures 
  # new values are updated during each run
- kubectl delete secret "$secret_name" || true
+ kubectl delete secret --namespace="$INPUT_SERVICE_NAMESPACE" "$secret_name" || true
  # create docker registry secret to allow pull
  # from private container registry 
  kubectl create secret docker-registry "$secret_name" \
