@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.2.1](https://www.github.com/kameshsampath/kn-service-action/compare/v0.2.0...v0.2.1) (2020-11-27)
+
+
+### Bug Fixes
+
+* add namespace to the secret delete ([3902ae0](https://www.github.com/kameshsampath/kn-service-action/commit/3902ae0e011f0aa038038ff978cfbd646f38f732))
+
 ## [0.2.0](https://www.github.com/kameshsampath/kn-service-action/compare/v0.1.0...v0.2.0) (2020-11-26)
 
 
