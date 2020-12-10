@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 set -e 
 set -o pipefail 
 
@@ -12,22 +11,6 @@ function appendParams(){
 
 kn_command=("kn" "service")
 
-if [[ -n "$INPUT_OPENSHIFT_TOKEN" ]];
-then
-  echo "Using OpenShfit Token to login"
-  oc login --insecure-skip-tls-verify "$INPUT_K8S_API_SERVER_URL" \
-    --token="$INPUT_OPENSHIFT_TOKEN"
-elif [[ -n $INPUT_OPENSHIFT_USERNAME ]] && [[ -n $INPUT_OPENSHIFT_PASSWORD ]];
-then
-  echo "Using OpenShfit Username and Password to login"
-  oc login --insecure-skip-tls-verify "$INPUT_K8S_API_SERVER_URL" \
-     --username="$INPUT_OPENSHIFT_USERNAME" \
-     --password="$INPUT_OPENSHIFT_PASSWORD"
-else
-  #TODO Ability to log into kube cluster
-  echo "Login to the Kube Cluster"
-fi
-
 #################################################
 ##
 #################################################
@@ -38,10 +21,10 @@ if [[ $INPUT_PRIVATE_REGISTRY == "yes" ]] || [[ $INPUT.PRIVATE_REGISTRY == "true
 then
  # delete the old secret if exist, that ensures 
  # new values are updated during each run
- kubectl delete secret --namespace="$INPUT_SERVICE_NAMESPACE" "$secret_name" || true
+ oc delete secret --namespace="$INPUT_SERVICE_NAMESPACE" "$secret_name" || true
  # create docker registry secret to allow pull
  # from private container registry 
- kubectl create secret docker-registry "$secret_name" \
+ oc create secret docker-registry "$secret_name" \
    --namespace="$INPUT_SERVICE_NAMESPACE" \
    --docker-username="$INPUT_REGISTRY_USER" \
    --docker-password="$INPUT_REGISTRY_PASSWORD" \

@@ -16,10 +16,6 @@ The action has the following parameters:
 [cols="1,2,1", options="header"]
 |===
 | Name | Description | Default
-| k8s_api_server_url[red]^*^ | The Kube API Server URL |
-| openshift_token | The OpenShift Login Token |
-| openshift_user | The OpenShift Login User |
-| openshift_password | The OpenShift Login User Password |
 | service_name[red]^*^ | The Knative Service Name |
 | service_namespace | The Kubernetes Namespace to deploy to | default
 | service_operation | The `kn` service operation *create*, *update*, *delete* etc., | create
@@ -57,29 +53,24 @@ As the examples show using GitHub Container registry create the following secret
 
 If you are using other Container registries you might need to add extra secrets to your repository typically for your registry username and password.
 
-As OpenShift is used a the Kubernetes platform in the example, add the following secret to your repository:
-
-- `OPENSHIFT_SERVER_URL` - The OpenShift API server url, can be retrieved using `oc whoami --show-server`
-
-[IMPORTANT]
-====
-Since this action is development phase, it allows `--insecure-skip-tls-verify` flag to OpenShift login. I will be removed in upcoming releases.
-====
-
-=== With OpenShift Token
-
-Add the following GitHub Secret to your repository:
-
-- `OPENSHIFT_TOKEN` -  The OpenShift User authenetication token, can be retrieved using `oc whoami -t`.
+As OpenShift is used as the Kubernetes platform in the example, you can use the https://github.com/redhat-actions/oc-login[oc-login action],to login into the OpenShift cluster to perform `kn` actions.
 
 [source,yaml]
 ----
+# Login into the OpenShift cluster with your OpenShift username 
+# and password
+- name: Login into OpenShift Cluster
+  id: oc_login
+  uses: redhat-actions/oc-login@v1
+  with:
+     openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
+     openshift_username: ${{ secrets.OPENSHIFT_TOKEN }}
+     openshift_password: : ${{ secrets.OPENSHIFT_PASSWORD }}
+# With successful login in previous step, do the kn action
 - name: Knative Service Deploy
   id: kn_service_deploy
   uses: kameshsampath/kn-service-action
   with: 
-    k8s_api_server_url: "${{ secrets.OPENSHIFT_SERVER_URL }}"
-    openshift_token: "${{ secrets.OPENSHIFT_TOKEN }}"
     service_name: fruits-app
     service_namespace: demos
     container_image: "ghcr.io/kameshsampath/fruits-app@${{ steps.docker_build_push.outputs.digest }}"
@@ -91,37 +82,12 @@ The above action configuration will be interpreted in to `kn` command like:
 
 [source,bash,subs="quotes"]
 ----
- kn service create fruits-app --namespace=demos --image=ghcr.io/kameshsampath/fruits-app@sha256:b38df3a060b6eb5c9cb4d4fba4deecba4abc5f97f6db0f5d6a04109bf1e8fe79 #--pull-secret=ghcr.io.pull-secret#
+ kn service create fruits-app \
+  --namespace=demos \
+  --image=ghcr.io/kameshsampath/fruits-app@sha256:b38df3a060b6eb5c9cb4d4fba4deecba4abc5f97f6db0f5d6a04109bf1e8fe79 \
+ --pull-secret=ghcr.io.pull-secret
 ----
 
-=== With OpenShift Username and Password
-
-Add the following GitHub Secrets to your repository:
-
-- `OPENSHIFT_USER`     -  The OpenShift User to authenticate.
-- `OPENSHIFT_PASSWORD` -  The OpenShift User to authenticate.
-
-[source,yaml]
-----
-- name: Knative Service Deploy
-  id: kn_service_deploy
-  uses: kameshsampath/kn-service-action
-  with: 
-    k8s_api_server_url: "${{ secrets.OPENSHIFT_SERVER_URL }}"
-    openshift_user: "${{ secrets.OPENSHIFT_USERNAME }}"
-    openshift_password: "${{ secrets.OPENSHIFT_PASSWORD }}"
-    service_name: fruits-app
-    service_namespace: demos
-    private_registry: no
-    container_image: "docker.io/kameshsampath/fruits-app@${{ steps.docker_build_push.outputs.digest }}"
-----
-
-The above action configuration will be interpreted in to `kn` command like:
-
-[source,bash,subs="quotes"]
-----
- kn service create fruits-app --namespace=demos --image=docker.io/kameshsampath/fruits-app@sha256:b38df3a060b6eb5c9cb4d4fba4deecba4abc5f97f6db0f5d6a04109bf1e8fe79 
-----
 == Passing extra service arguments
 
 The service action provides basic options such namespace, service name, image and operation to be configured. There might be cases where you might want to pass extra arguments to the `kn service <command>`, in those cases you can use `service_params` as shown:
@@ -134,9 +100,6 @@ Consider an example that you want to add `--max-scale=5` and `--min-scale=1`, th
   id: kn_service_deploy
   uses: kameshsampath/kn-service-action
   with: 
-    k8s_api_server_url: "${{ secrets.OPENSHIFT_SERVER_URL }}"
-    openshift_user: "${{ secrets.OPENSHIFT_USERNAME }}"
-    openshift_password: "${{ secrets.OPENSHIFT_PASSWORD }}"
     service_name: fruits-app
     service_namespace: demos
     private_registry: no
