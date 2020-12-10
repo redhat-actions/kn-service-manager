@@ -11,8 +11,6 @@ function appendParams(){
 }
 
 INPUT_PRIVATE_REGISTRY="true"
-INPUT_K8S_API_SERVER_URL=$(oc whoami --show-server)
-INPUT_OPENSHIFT_TOKEN=$(oc whoami -t)
 INPUT_CONTAINER_IMAGE='quay.io/kameshsampath/fruits-app:master'
 INPUT_SERVICE_NAME='fun'
 INPUT_SERVICE_NAMESPACE='test'
@@ -23,21 +21,6 @@ INPUT_SERVICE_OPERATION='create'
 kn_command=("kn" "service")
 
 INPUT_SERVICE_PARAMS=$1
-
-#TODO how to login to kube servers??
-#TODO allow secure sigin
-
-if [[ -n "$INPUT_OPENSHIFT_TOKEN" ]];
-then
-  echo "Using OpenShfit Token to login"
-  oc login --insecure-skip-tls-verify "$INPUT_K8S_API_SERVER_URL" \
-    --token="$INPUT_OPENSHIFT_TOKEN"
-else 
-  echo "Using OpenShfit Username and Password to login"
-  oc login --insecure-skip-tls-verify "$INPUT_K8S_API_SERVER_URL" \
-     --username="$INPUT_OPENSHIFT_USERNAME" \
-     --password="$INPUT_OPENSHIFT_PASSWORD"
-fi
 
 registry_server="${INPUT_CONTAINER_IMAGE%/*/*}"
 secret_name="$registry_server.pull-secret"

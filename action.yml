@@ -4,18 +4,6 @@ branding:
   icon: book-open
   color: yellow
 inputs:
-  k8s_api_server_url:
-    description: 'The Kube API Server URL'
-    required: true
-  openshift_token:
-    description: 'The OpenShift Login Token'
-    required: false
-  openshift_user:
-    description: 'The OpenShift Login User'
-    required: false
-  openshift_password:
-    description: 'The OpenShift Login User Password'
-    required: false
   service_name:
     description: "The Knative Service Name"
     required: true
