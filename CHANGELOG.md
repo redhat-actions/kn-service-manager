@@ -1,5 +1,13 @@
 # Changelog
 
+### [0.2.2](https://www.github.com/kameshsampath/kn-service-action/compare/v0.2.1...v0.2.2) (2020-12-10)
+
+
+### Bug Fixes
+
+* openshift download url ([3246555](https://www.github.com/kameshsampath/kn-service-action/commit/3246555555f3b278834cdc242269c707fc247a73))
+* remove oc login, readme update and use buildah ([8f5b8ef](https://www.github.com/kameshsampath/kn-service-action/commit/8f5b8ef8fe385b7848ce28509e47817aabec9916))
+
 ### [0.2.1](https://www.github.com/kameshsampath/kn-service-action/compare/v0.2.0...v0.2.1) (2020-11-27)
 
 
