@@ -16,7 +16,6 @@ jobs:
         id: buildah_build
         uses: redhat-actions/buildah-build@v1
         with:
-           push: false
            image: ghcr.io/kameshsampath/kn-service-action
            dockerfiles: |
              ./Dockerfile
