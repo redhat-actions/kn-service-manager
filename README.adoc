@@ -65,7 +65,7 @@ As OpenShift is used as the Kubernetes platform in the example, you can use the 
   with:
      openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
      openshift_username: ${{ secrets.OPENSHIFT_USERNAME }}
-     openshift_password: : ${{ secrets.OPENSHIFT_PASSWORD }}
+     openshift_password: ${{ secrets.OPENSHIFT_PASSWORD }}
 # With successful login in previous step, do the kn action
 - name: Knative Service Deploy
   id: kn_service_deploy
