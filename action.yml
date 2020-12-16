@@ -16,7 +16,7 @@ inputs:
     required: false
     default: "create"
   container_image:
-    description: 'The Knative Serivce Image'
+    description: 'The Knative Service Image'
     required: true
   service_params:
     description: 'The extra parameter to pass to service'
@@ -38,10 +38,6 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-     - ${{ inputs.k8s_api_server_url }}
-     - ${{ inputs.openshift_token }}
-     - ${{ inputs.openshift_user }}
-     - ${{ inputs.openshift_password }}
      - ${{ inputs.service_name }}
      - ${{ inputs.service_namespace }}
      - ${{ inputs.service_operation }}
