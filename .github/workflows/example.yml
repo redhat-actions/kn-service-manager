@@ -81,6 +81,7 @@ jobs:
             openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
             openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
             insecure_skip_tls_verify: true
+            namespace: diagrawa-code
             # openshift_password: ${{ secrets.OPENSHIFT_PASSWORD }}
 
        - name: Knative Service Deploy
@@ -88,7 +89,7 @@ jobs:
          uses: redhat-actions/kn-service-deploy@main
          with: 
            service_name: fruits-app
-          #  service_namespace: default
+           service_namespace: diagrawa-code
            registry_user: ${{ secrets.REGISTRY_USER }}
            registry_password: ${{ secrets.REGISTRY_PASSWORD }}
            container_image: "${{ steps.push-tag-to-quay.outputs.registry-path }}"
