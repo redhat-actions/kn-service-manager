@@ -21,9 +21,8 @@ The action has the following parameters:
 | service_operation | The `kn` service operation *create*, *update*, *delete* etc., | create
 | container_image[red]^*^ | The container image to use for service |
 | service_params | The extra service parameters to pass to the service |
-| private_registry | Whether the image is pushed to private registry. Possible values *yes* or *no* | yes
-| registry_user |The registry user to use to create image pull secret.Required if private_registry is *yes*. | 
-| registry_password | The registry user credentials. Required if private_registry is *yes*. | 
+| registry_user |The registry user to use to create image pull secret.Required if image registry is private| 
+| registry_password | The registry user password. Required if image registry is private| 
 |===
 Marked [red]^*^ are required attributes
 
@@ -36,7 +35,7 @@ Marked [red]^*^ are required attributes
 
 [NOTE]
 ====
-When `private_registry` is *yes*, then the action will create a Kubernetes Secret of type `docker-registry` with the `docker-username` to be `registry_user` and `docker-password` to be `registry_password`. The `docker-server` value will be the first part of the `container_image` value.
+When username and password is provided to pull the image, then the action will create a Kubernetes Secret of type `docker-registry` with the `docker-username` to be `registry_user` and `docker-password` to be `registry_password`. The `docker-server` value will be the first part of the `container_image` value.
 
 The secret will be created in `service_namespace` with name pattern like `docker-server.pull-secret`.
 ====
