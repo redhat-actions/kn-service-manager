@@ -14,10 +14,10 @@ kn_command=("kn" "service")
 #################################################
 ##
 #################################################
-registry_server="${INPUT_CONTAINER_IMAGE%/*/*}"
-secret_name="$registry_server.pull-secret"
+docker_server="${INPUT_CONTAINER_IMAGE%/*/*}"
+secret_name="$docker_server.pull-secret"
 is_private_registry=false
-if [[ $INPUT_PRIVATE_REGISTRY == "yes" ]] || [[ $INPUT.PRIVATE_REGISTRY == "true" ]];
+if [[ $INPUT_REGISTRY_USER != "" ]] && [[ $INPUT_REGISTRY_PASSWORD != "" ]];
 then
  # delete the old secret if exist, that ensures 
  # new values are updated during each run
@@ -28,7 +28,7 @@ then
    --namespace="$INPUT_SERVICE_NAMESPACE" \
    --docker-username="$INPUT_REGISTRY_USER" \
    --docker-password="$INPUT_REGISTRY_PASSWORD" \
-   --docker-server="$registry_server"
+   --docker-server="$docker_server"
   is_private_registry=true
 fi
 
@@ -36,10 +36,12 @@ appendParams "$INPUT_SERVICE_OPERATION"
 appendParams "$INPUT_SERVICE_NAME"
 appendParams "--namespace=$INPUT_SERVICE_NAMESPACE"
 
+echo $is_private_registry
+
 case $INPUT_SERVICE_OPERATION in
   create | update | apply )
     appendParams "--image=$INPUT_CONTAINER_IMAGE"
-    [[ $is_private_registry ]] \
+    [[ "$is_private_registry" != "false" ]] \
     && appendParams "--pull-secret=$secret_name"
    ;;
   *)

@@ -11,19 +11,28 @@ jobs:
   checkoutAndBuild:
     runs-on: ubuntu-latest
     steps:
+
+      # Checkout Knative service deploy action github repository
+      - name: Checkout Knative service deploy action
+        uses: actions/checkout@v2
+        with:
+          path: "kn-service-deploy"
+
       - name: Set up JDK 11
         uses: actions/setup-java@v1
         with:
           java-version: 11
 
-      - name: Checkout
+      - name: Checkout example code
         id: git_checkout
         uses: actions/checkout@v2
         with:
           repository: kameshsampath/kn-service-action-example
+          path: 'fruits-app'
 
       - name: Maven Build
         id: build_app
+        working-directory: fruits-app
         run: mvn -B -DskipTests clean package --file pom.xml
 
       - name: Cache Maven packages
@@ -48,7 +57,9 @@ jobs:
          uses: actions/download-artifact@v2
          with:
           name: buildArtifacts
+
        - name: Commit Metadata
+         working-directory: fruits-app
          id: commit_metadata
          run: |
             echo "##[set-output name=sha;]$(echo $(git rev-parse --short $GITHUB_SHA))"
@@ -57,22 +68,22 @@ jobs:
        - name: Build Image
          uses: redhat-actions/buildah-build@v1
          with:
-          # image: "${{ env.IMAGE_REGISTRY }}/${{ env.REGISTRY_USER }}/${{ env.IMAGE_NAME }}"
           image: ${{ env.IMAGE_NAME }}
           tag: "${{steps.commit_metadata.outputs.branch}}-${{steps.commit_metadata.outputs.sha}}"
           base-image: ${{ env.BASE_IMAGE }}
+          context: fruits-app
           dockerfiles: |
-            src/main/docker/Dockerfile.jvm
-
+            ./fruits-app/src/main/docker/Dockerfile.jvm
+ 
        - name: Push To Quay
          id: push-tag-to-quay
          uses: redhat-actions/push-to-registry@v1
          with:
           image: ${{ env.IMAGE_NAME }}
           tag: "${{steps.commit_metadata.outputs.branch}}-${{steps.commit_metadata.outputs.sha}}"
-          registry: ${{ env.IMAGE_REGISTRY }}/${{ secrets.REGISTRY_USER }}
-          username: ${{ secrets.REGISTRY_USER }}
-          password: ${{ secrets.REGISTRY_PASSWORD }}
+          registry: ${{ env.IMAGE_REGISTRY }}/${{ env.REGISTRY_USERNAME }}
+          username: ${{ env.REGISTRY_USERNAME }}
+          password: ${{ env.REGISTRY_PASSWORD }}
 
        - name: Login into OpenShift Cluster
          id: oc_login
@@ -82,16 +93,13 @@ jobs:
             openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
             insecure_skip_tls_verify: true
             namespace: diagrawa-code
-            # openshift_password: ${{ secrets.OPENSHIFT_PASSWORD }}
-
+        
        - name: Knative Service Deploy
          id: kn_service_deploy
-         uses: redhat-actions/kn-service-deploy@main
+         uses: ./kn-service-deploy/
          with: 
            service_name: fruits-app
            service_namespace: diagrawa-code
-           registry_user: ${{ secrets.REGISTRY_USER }}
-           registry_password: ${{ secrets.REGISTRY_PASSWORD }}
            container_image: "${{ steps.push-tag-to-quay.outputs.registry-path }}"
        
        - name: Show Kn Service URL

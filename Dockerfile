@@ -11,5 +11,5 @@ RUN microdnf install -y gzip tar curl \
     && chmod +x /usr/local/bin/oc /usr/local/bin/kubectl
 
 COPY ./entrypoint.sh /entrypoint.sh
-
+RUN chmod +x entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
