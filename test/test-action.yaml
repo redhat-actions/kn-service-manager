@@ -1,8 +1,0 @@
----
-name: Knative Service Deploy
-id: kn_service_deploy
-uses: kameshsampath/kn-service-action
-with: 
-  service_params: >-
-    --max-scale=10
-    --min-scale=1

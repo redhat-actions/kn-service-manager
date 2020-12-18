@@ -11,6 +11,15 @@ function appendParams(){
 
 kn_command=("kn" "service")
 
+namespace_arg=""
+
+if [[ -n $INPUT_SERVICE_NAMESPACE ]]; then
+    echo "Setting service namespace to '$INPUT_SERVICE_NAMESPACE'"
+    namespace_arg="--namespace=$INPUT_SERVICE_NAMESPACE"
+else
+    echo "No namespace provided"
+fi
+
 #################################################
 ##
 #################################################
@@ -21,11 +30,11 @@ if [[ $INPUT_REGISTRY_USER != "" ]] && [[ $INPUT_REGISTRY_PASSWORD != "" ]];
 then
  # delete the old secret if exist, that ensures 
  # new values are updated during each run
- oc delete secret --namespace="$INPUT_SERVICE_NAMESPACE" "$secret_name" || true
+ oc delete secret $namespace_arg "$secret_name" || true
  # create docker registry secret to allow pull
  # from private container registry 
  oc create secret docker-registry "$secret_name" \
-   --namespace="$INPUT_SERVICE_NAMESPACE" \
+   $namespace_arg \
    --docker-username="$INPUT_REGISTRY_USER" \
    --docker-password="$INPUT_REGISTRY_PASSWORD" \
    --docker-server="$docker_server"
@@ -34,12 +43,10 @@ fi
 
 appendParams "$INPUT_SERVICE_OPERATION"
 appendParams "$INPUT_SERVICE_NAME"
-appendParams "--namespace=$INPUT_SERVICE_NAMESPACE"
-
-echo $is_private_registry
+appendParams $namespace_arg
 
 case $INPUT_SERVICE_OPERATION in
-  create | update | apply )
+  create | update )
     appendParams "--image=$INPUT_CONTAINER_IMAGE"
     [[ "$is_private_registry" != "false" ]] \
     && appendParams "--pull-secret=$secret_name"
@@ -63,5 +70,5 @@ ${kn_command[*]}
 
 # After successful service creation extract the service url 
 # and set that as output to the action
-service_url=$(kn service describe --namespace="$INPUT_SERVICE_NAMESPACE" "$INPUT_SERVICE_NAME" -o url)
+service_url=$(kn service describe $namespace_arg "$INPUT_SERVICE_NAME" -o url)
 echo "::set-output name=service_url::$service_url"

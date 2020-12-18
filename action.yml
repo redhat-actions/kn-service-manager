@@ -1,5 +1,6 @@
-name: "Knative Client Service"
+name: "Knative Service Deploy"
 description: "Creating Knative Services using kn"
+author: 'Red Hat'
 branding:
   icon: circle
   color: red
@@ -8,9 +9,8 @@ inputs:
     description: "The Knative Service Name"
     required: true
   service_namespace:
-    description: "The Kubernetes Namespace to deploy to "
+    description: "The Kubernetes Namespace to deploy to. Defaults to current context's namespace."
     required: false
-    default: "default"
   service_operation:
     description: "The Knative Service Operation"
     required: false
