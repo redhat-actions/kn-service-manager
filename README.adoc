@@ -1,4 +1,4 @@
-= Knative Client Service Action
+= Knative Service Deploy
 
 GitHub Action to deploy https://kn.dev[Knative Service] using https://github.com/knative/client[Knative Client].
 
@@ -10,7 +10,7 @@ Kubernetes Cluster with Knative, if you dont have an OpenShift cluster get one s
 
 The action has the following parameters:
 
-.Inputs
+=== Inputs
 [cols="1,2,1", options="header"]
 |===
 | Name | Description | Default
@@ -22,9 +22,9 @@ The action has the following parameters:
 | registry_user |The registry user to use to create image pull secret. Required if image registry is private| 
 | registry_password | The registry user password. Required if image registry is private| 
 |===
-Marked [red]^*^ are required attributes
+==== Marked [red]^*^ are required attributes
 
-.Outputs
+=== Outputs
 [cols="1,2", options="header"]
 |===
 | Name | Description
