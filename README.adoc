@@ -4,7 +4,7 @@ GitHub Action to deploy https://kn.dev[Knative Service] using https://github.com
 
 == Pre-requisites
 
-Kubernetes Cluster with Knative, if you dont have an OpenShift cluster get one spinned instantly via https://try.openshift.com[try.openshift.com].
+Kubernetes Cluster with Knative, if you dont have an OpenShift cluster see https://try.openshift.com[try.openshift.com] or try our new https://developers.redhat.com/developer-sandbox[Developer Sandbox]
 
 == Parameters
 
@@ -15,12 +15,12 @@ The action has the following parameters:
 |===
 | Name | Description | Default
 | service_name[red]^*^ | The Knative Service Name |
-| service_namespace | The Kubernetes Namespace to deploy to | default
+| service_namespace | The Kubernetes Namespace to deploy to. Defaults to current context's namespace |
 | service_operation | The `kn` service operation *create*, *update*, *delete* etc., | create
 | container_image[red]^*^ | The container image to use for service |
 | service_params | The extra service parameters to pass to the service |
 | registry_user |The registry user to use to create image pull secret. Required if image registry is private| 
-| registry_password | The registry user password. Required if image registry is private| 
+| registry_password | The registry user password or token. Required if image registry is private | 
 |===
 ==== Marked [red]^*^ are required attributes
 
@@ -34,15 +34,13 @@ The action has the following parameters:
 [NOTE]
 ====
 When username and password is provided to pull the image, then the action will create a Kubernetes Secret of type `docker-registry` with the `docker-username` to be `registry_user` and `docker-password` to be `registry_password`. The `docker-server` value will be the first part of the `container_image` value.
-
-The secret will be created in `service_namespace` with name pattern like `docker-server.pull-secret`.
 ====
 
 == How to add to your action
 
 - Create the required https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets[GitHub Secrets] in your GitHub repository:
 
-- Container registry access e.g GitHub Container Registry where you push built images.
+- Container registry access e.g quay.io where you push built images.
 
 For GitHub Container registry create the following secret and add to your repository:
 
@@ -71,7 +69,6 @@ As OpenShift is used as the Kubernetes platform in the example, you can use the 
   uses: redhat-actions/kn-service-deploy@v1
   with: 
     service_name: fruits-app
-    service_namespace: ${{ env.NAMESPACE }}
     container_image: "${{ steps.push-tag-to-quay.outputs.registry-path }}"
 ----
 
@@ -88,13 +85,10 @@ Consider an example that you want to add `--max-scale=5` and `--min-scale=1`, th
   uses: redhat-actions/kn-service-deploy@v1
   with: 
     service_name: fruits-app
-    service_namespace: ${{ env.NAMESPACE }}
     container_image: "${{ steps.push-tag-to-quay.outputs.registry-path }}"
     service_params: >
       --max-scale=5
       --min-scale=1
 ----
 
-The above action configuration will be interpreted in to `kn` command like:
-
-For a complete action example check https://github.com/redhat-actions/kn-service-deploy/blob/main/.github/workflows/example.yml[kn-service-action-example].
+For a complete example see ./.github/workflows/example.yml[the example workflow].
