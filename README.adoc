@@ -1,7 +1,5 @@
 = Knative Client Service Action
 
-image::https://github.com/kameshsampath/kn-service-action/workflows/CI/badge.svg?style=svg&branch=master[CI]
-
 GitHub Action to deploy https://kn.dev[Knative Service] using https://github.com/knative/client[Knative Client].
 
 == Pre-requisites
@@ -21,7 +19,7 @@ The action has the following parameters:
 | service_operation | The `kn` service operation *create*, *update*, *delete* etc., | create
 | container_image[red]^*^ | The container image to use for service |
 | service_params | The extra service parameters to pass to the service |
-| registry_user |The registry user to use to create image pull secret.Required if image registry is private| 
+| registry_user |The registry user to use to create image pull secret. Required if image registry is private| 
 | registry_password | The registry user password. Required if image registry is private| 
 |===
 Marked [red]^*^ are required attributes
@@ -42,11 +40,11 @@ The secret will be created in `service_namespace` with name pattern like `docker
 
 == How to add to your action
 
-- Create the following https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets[GitHub Secrets] in your GitHub repository:
+- Create the required https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets[GitHub Secrets] in your GitHub repository:
 
 - Container registry access e.g GitHub Container Registry where you push built images.
 
-As the examples show using GitHub Container registry create the following secret and add to your repository:
+For GitHub Container registry create the following secret and add to your repository:
 
 `GHCR_PAT` - The https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token[GithHub PAT] to allow pushing built image into GitHub Container registry .
 
@@ -62,29 +60,19 @@ As OpenShift is used as the Kubernetes platform in the example, you can use the 
   id: oc_login
   uses: redhat-actions/oc-login@v1
   with:
-     openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
-     openshift_username: ${{ secrets.OPENSHIFT_USERNAME }}
-     openshift_password: ${{ secrets.OPENSHIFT_PASSWORD }}
+    openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
+    openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
+    insecure_skip_tls_verify: true
+    namespace: ${{ env.NAMESPACE }}
+
 # With successful login in previous step, do the kn action
 - name: Knative Service Deploy
   id: kn_service_deploy
-  uses: kameshsampath/kn-service-action
+  uses: redhat-actions/kn-service-deploy@v1
   with: 
     service_name: fruits-app
-    service_namespace: demos
-    container_image: "ghcr.io/kameshsampath/fruits-app@${{ steps.docker_build_push.outputs.digest }}"
-    registry_user: "${{ github.repository_owner }}"
-    registry_user: "${{ secrets.GHCR_PAT }}"
-----
-
-The above action configuration will be interpreted in to `kn` command like:
-
-[source,bash,subs="quotes"]
-----
- kn service create fruits-app \
-  --namespace=demos \
-  --image=ghcr.io/kameshsampath/fruits-app@sha256:b38df3a060b6eb5c9cb4d4fba4deecba4abc5f97f6db0f5d6a04109bf1e8fe79 \
- --pull-secret=ghcr.io.pull-secret
+    service_namespace: ${{ env.NAMESPACE }}
+    container_image: "${{ steps.push-tag-to-quay.outputs.registry-path }}"
 ----
 
 == Passing extra service arguments
@@ -97,12 +85,11 @@ Consider an example that you want to add `--max-scale=5` and `--min-scale=1`, th
 ----
 - name: Knative Service Deploy
   id: kn_service_deploy
-  uses: kameshsampath/kn-service-action
+  uses: redhat-actions/kn-service-deploy@v1
   with: 
     service_name: fruits-app
-    service_namespace: demos
-    private_registry: no
-    container_image: "docker.io/kameshsampath/fruits-app@${{ steps.docker_build_push.outputs.digest }}"
+    service_namespace: ${{ env.NAMESPACE }}
+    container_image: "${{ steps.push-tag-to-quay.outputs.registry-path }}"
     service_params: >
       --max-scale=5
       --min-scale=1
@@ -110,9 +97,4 @@ Consider an example that you want to add `--max-scale=5` and `--min-scale=1`, th
 
 The above action configuration will be interpreted in to `kn` command like:
 
-[source,bash,subs="quotes"]
-----
- kn service create fruits-app --namespace=demos --image=docker.io/kameshsampath/fruits-app@sha256:b38df3a060b6eb5c9cb4d4fba4deecba4abc5f97f6db0f5d6a04109bf1e8fe79 #--max-scale=5 --min-scale=1#
-----
-
-For a complete action example check https://github.com/kameshsampath/kn-service-action-example[kn-service-action-example].
+For a complete action example check https://github.com/redhat-actions/kn-service-deploy/blob/main/.github/workflows/example.yml[kn-service-action-example].
