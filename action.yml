@@ -12,32 +12,32 @@ inputs:
     required: false
     default: "default"
   service_operation:
-    description: 'The Knative Service Operation'
+    description: "The Knative Service Operation"
     required: false
     default: "create"
   container_image:
-    description: 'The Knative Service Image'
+    description: "The Knative Service Image"
     required: true
   service_params:
-    description: 'The extra parameter to pass to service'
+    description: "The extra parameter to pass to service"
     required: false
   registry_user:
-    description: 'The registry user to use to create image pull secret'
+    description: "The registry user to use to create image pull secret"
     required: false
   registry_password:
-    description: 'The registry user password'
+    description: "The registry user password"
     required: false
 outputs:
   service_url:
     description: "The Knative Service URL"
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
+  using: "docker"
+  image: "Dockerfile"
   args:
-     - ${{ inputs.service_name }}
-     - ${{ inputs.service_namespace }}
-     - ${{ inputs.service_operation }}
-     - ${{ inputs.container_image }}
-     - ${{ inputs.service_params }}
-     - ${{ inputs.registry_user }}
-     - ${{ inputs.registry_password }}
+    - ${{ inputs.service_name }}
+    - ${{ inputs.service_namespace }}
+    - ${{ inputs.service_operation }}
+    - ${{ inputs.container_image }}
+    - ${{ inputs.service_params }}
+    - ${{ inputs.registry_user }}
+    - ${{ inputs.registry_password }}
