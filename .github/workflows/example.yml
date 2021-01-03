@@ -14,11 +14,6 @@ jobs:
   checkout-and-build:
     runs-on: ubuntu-latest
     steps:
-      # Checkout Knative service deploy action github repository
-      - name: Checkout Knative service deploy action
-        uses: actions/checkout@v2
-        with:
-          path: "kn-service-deploy"
 
       # Checkout example repository
       - name: Checkout example code
@@ -82,6 +77,13 @@ jobs:
     runs-on: ubuntu-latest
     needs: [checkout-and-build]
     steps:
+
+      # Checkout Knative service deploy action github repository
+      - name: Checkout Knative service deploy action
+        uses: actions/checkout@v2
+        with:
+          path: "kn-service-deploy"
+      
       - name: Download working directory
         uses: actions/download-artifact@v2
         with:
