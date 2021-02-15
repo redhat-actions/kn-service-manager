@@ -65,6 +65,11 @@ Kubernetes Cluster with Knative, if you dont have an OpenShift cluster see [try.
     <td>No</td>
     <td>The registry user password or token. Required if image registry is private. </td>
   </tr>
+  <tr>
+    <td>force_create</td>
+    <td>No</td>
+    <td>Create service forcefully, replaces existing service if any. Only valid for `create` service operation. </td>
+  </tr>  
 
 </table>
 

@@ -27,17 +27,15 @@ inputs:
   registry_password:
     description: "The registry user password"
     required: false
+  force_create:
+    description: |
+      "Create service forcefully, replaces existing service if any.
+      Only valid for create service operation"
+    required: false
+    default: "false"
 outputs:
   service_url:
     description: "The Knative Service URL"
 runs:
   using: "docker"
   image: "Dockerfile"
-  args:
-    - ${{ inputs.service_name }}
-    - ${{ inputs.service_namespace }}
-    - ${{ inputs.service_operation }}
-    - ${{ inputs.container_image }}
-    - ${{ inputs.service_params }}
-    - ${{ inputs.registry_user }}
-    - ${{ inputs.registry_password }}

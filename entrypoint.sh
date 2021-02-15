@@ -52,9 +52,13 @@ case $INPUT_SERVICE_OPERATION in
     && appendParams "--pull-secret=$secret_name"
    ;;
   *)
-   printf "%s is not a valid kn service command" "$INPUT_SERVICE_OPERATION"
+   printf "❌ %s is not a valid kn service command" "$INPUT_SERVICE_OPERATION"
   ;;
 esac
+
+# Add force flag in create command
+[[ "$INPUT_SERVICE_OPERATION" == "create" ]] && [[ "$INPUT_FORCE_CREATE" != "false" ]] \
+    && appendParams "--force"
 
 # Add an extra parameters to the service
 OLDIFS=$IFS
@@ -65,10 +69,11 @@ then
   IFS=$OLDIFS
 fi
 
-echo "Running: ${kn_command[*]} "
+echo "⏳ Running: ${kn_command[*]} "
 ${kn_command[*]}
 
 # After successful service creation extract the service url 
 # and set that as output to the action
+echo "✅ $INPUT_SERVICE_NAME service created successfully."
 service_url=$(kn service describe $namespace_arg "$INPUT_SERVICE_NAME" -o url)
 echo "::set-output name=service_url::$service_url"
