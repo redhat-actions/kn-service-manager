@@ -46,7 +46,7 @@ appendParams "$INPUT_SERVICE_NAME"
 appendParams $namespace_arg
 
 case $INPUT_SERVICE_OPERATION in
-  create | update )
+  create | update | apply )
     appendParams "--image=$INPUT_CONTAINER_IMAGE"
     [[ "$is_private_registry" != "false" ]] \
     && appendParams "--pull-secret=$secret_name"
