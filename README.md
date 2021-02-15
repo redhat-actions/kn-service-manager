@@ -40,7 +40,7 @@ Kubernetes Cluster with Knative, if you dont have an OpenShift cluster see [try.
   <tr>
     <td>service_operation</td>
     <td>No</td>
-    <td>The `kn` service operation <code>create</code>, <code>update</code>, <code>delete</code>, etc. 
+    <td>The `kn` service operation <code>create</code>, <code>update</code>, <code>apply</code> etc. 
     Defaults to <code>create</code></td>
   </tr>
 
