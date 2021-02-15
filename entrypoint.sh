@@ -23,6 +23,19 @@ fi
 #################################################
 ##
 #################################################
+
+# Delete kn service if service operation is set to 'delete'
+if [[ $INPUT_SERVICE_OPERATION == "delete" ]];
+then
+  appendParams "delete"
+  appendParams "$INPUT_SERVICE_NAME"
+  echo "⏳ Running: ${kn_command[*]} "
+  echo "⏳ Deleting $INPUT_SERVICE_NAME service"
+  ${kn_command[*]}
+  echo "✅ $INPUT_SERVICE_NAME service successfully deleted"
+  exit 0
+fi
+
 docker_server="${INPUT_CONTAINER_IMAGE%/*/*}"
 secret_name="$docker_server.pull-secret"
 is_private_registry=false

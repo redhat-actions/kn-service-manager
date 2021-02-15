@@ -27,7 +27,7 @@ Kubernetes Cluster with Knative, if you dont have an OpenShift cluster see [try.
     <td>service_name</td>
     <td>Yes</td>
     <td>
-      The Knative Service Name.
+      The Knative Service name.
     </td>
   </tr>
 
@@ -40,14 +40,14 @@ Kubernetes Cluster with Knative, if you dont have an OpenShift cluster see [try.
   <tr>
     <td>service_operation</td>
     <td>No</td>
-    <td>The `kn` service operation <code>create</code>, <code>update</code>, <code>apply</code> etc. 
-    Defaults to <code>create</code></td>
+    <td>The `kn` service operation <code>create</code>, <code>update</code>, <code>apply</code> <code>delete</code>. 
+    Defaults to <code>create</code>.</td>
   </tr>
 
   <tr>
     <td>container_image</td>
-    <td>Yes</td>
-    <td>The container image to use for service. </td>
+    <td>No</td>
+    <td>The container image to use for service. Not required if <code>service_operation</code> is set to <code>delete</code>. </td>
   </tr>
 
   <tr>
@@ -68,7 +68,9 @@ Kubernetes Cluster with Knative, if you dont have an OpenShift cluster see [try.
   <tr>
     <td>force_create</td>
     <td>No</td>
-    <td>Create service forcefully, replaces existing service if any. Only valid for `create` service operation. </td>
+    <td>Create service forcefully, replaces existing service if any. Only valid for <code>create</code> service operation.
+    Defaults to <code>false</code>.
+     </td>
   </tr>  
 
 </table>
@@ -87,6 +89,7 @@ Kubernetes Cluster with Knative, if you dont have an OpenShift cluster see [try.
     <td>service_url</td>
     <td>
       Knative Service URL of the service created.
+      Will not be present if <code>service_operation</code> input is set to <code>delete</code>
     </td>
   </tr>
 
