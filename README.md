@@ -24,6 +24,32 @@ Kubernetes Cluster with Knative, if you dont have an OpenShift cluster see [try.
   </thead>
 
   <tr>
+    <td>container_image</td>
+    <td>No</td>
+    <td>The container image to use for service. Not required if <code>service_operation</code> is set to <code>delete</code>. </td>
+  </tr>
+
+  <tr>
+    <td>force_create</td>
+    <td>No</td>
+    <td>Create service forcefully, replaces existing service if any. Only valid for <code>create</code> service operation.
+    Defaults to <code>false</code>.
+     </td>
+  </tr>
+
+  <tr>
+    <td>registry_password</td>
+    <td>No</td>
+    <td>The registry user password or token. Required if image registry is private. </td>
+  </tr>
+
+  <tr>
+    <td>registry_user</td>
+    <td>No</td>
+    <td>The registry user to use to create image pull secret. Required if image registry is private. </td>
+  </tr>
+
+  <tr>
     <td>service_name</td>
     <td>Yes</td>
     <td>
@@ -45,33 +71,10 @@ Kubernetes Cluster with Knative, if you dont have an OpenShift cluster see [try.
   </tr>
 
   <tr>
-    <td>container_image</td>
-    <td>No</td>
-    <td>The container image to use for service. Not required if <code>service_operation</code> is set to <code>delete</code>. </td>
-  </tr>
-
-  <tr>
     <td>service_params</td>
     <td>No</td>
     <td>The extra service parameters to pass to the service. </td>
   </tr>
-  <tr>
-    <td>registry_user</td>
-    <td>No</td>
-    <td>The registry user to use to create image pull secret. Required if image registry is private. </td>
-  </tr>
-  <tr>
-    <td>registry_password</td>
-    <td>No</td>
-    <td>The registry user password or token. Required if image registry is private. </td>
-  </tr>
-  <tr>
-    <td>force_create</td>
-    <td>No</td>
-    <td>Create service forcefully, replaces existing service if any. Only valid for <code>create</code> service operation.
-    Defaults to <code>false</code>.
-     </td>
-  </tr>  
 
 </table>
 
