@@ -32,9 +32,9 @@ Kubernetes Cluster with Knative, if you dont have an OpenShift cluster see [try.
   <tr>
     <td>force_create</td>
     <td>No</td>
-    <td>Create service forcefully, replaces existing service if any. Only valid for <code>create</code> service operation.
+    <td>Pass `--force` to `kn create` to replace the existing service, instead of failing if the service already exists.
     Defaults to <code>false</code>.
-     </td>
+    </td>
   </tr>
 
   <tr>

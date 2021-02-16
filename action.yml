@@ -29,8 +29,8 @@ inputs:
     required: false
   force_create:
     description: |
-      "Create service forcefully, replaces existing service if any.
-      Only valid for create service operation"
+      "Pass --force to kn create to replace the existing service,
+      instead of failing if the service already exists.
     required: false
     default: "false"
 outputs:
