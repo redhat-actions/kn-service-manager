@@ -75,7 +75,7 @@ esac
 
 # Add an extra parameters to the service
 OLDIFS=$IFS
-if [[ -n $INPUT_KN_EXTRA_ARGS
+if [[ -n $INPUT_KN_EXTRA_ARGS ]]
 then
   IFS=$'\n'
   kn_command+=("${INPUT_KN_EXTRA_ARGS}")
