@@ -24,17 +24,37 @@ Kubernetes Cluster with Knative, if you dont have an OpenShift cluster see [try.
   </thead>
 
   <tr>
+    <td>command</td>
+    <td>No</td>
+    <td>The `kn` service command, accepted commands are <code>create</code>, <code>update</code>, <code>apply</code> and <code>delete</code>. 
+    Defaults to <code>create</code>.</td>
+  </tr>
+
+  <tr>
     <td>container_image</td>
     <td>No</td>
-    <td>The container image to use for service. Not required if <code>service_operation</code> is set to <code>delete</code>. </td>
+    <td>The container image to use for the service. Not required if <code>service_operation</code> is set to <code>delete</code>. </td>
   </tr>
 
   <tr>
     <td>force_create</td>
     <td>No</td>
-    <td>Pass `--force` to `kn create` to replace the existing service, instead of failing if the service already exists.
-    Defaults to <code>false</code>.
+    <td>"Pass <code>--force</code> to <code>kn create</code>. If the service already exists,
+    the service will be replaced, instead of kn create failing.
+    This input has no effect if <code>command</code> is not <code>create</code>. Defaults to <code>false</code>.
     </td>
+  </tr>
+
+  <tr>
+    <td>kn_extra_args</td>
+    <td>No</td>
+    <td>Any extra arguments to append to the <code>kn 'command'</code> call. </td>
+  </tr>
+
+  <tr>
+    <td>namespace</td>
+     <td>No</td>
+    <td>The Kubernetes Namespace to deploy to. Defaults to current context's namespace. </td>
   </tr>
 
   <tr>
@@ -46,7 +66,7 @@ Kubernetes Cluster with Knative, if you dont have an OpenShift cluster see [try.
   <tr>
     <td>registry_user</td>
     <td>No</td>
-    <td>The registry user to use to create image pull secret. Required if image registry is private. </td>
+    <td>The registry user to use to create the image pull secret. Required if image registry is private. </td>
   </tr>
 
   <tr>
@@ -55,25 +75,6 @@ Kubernetes Cluster with Knative, if you dont have an OpenShift cluster see [try.
     <td>
       The Knative Service name.
     </td>
-  </tr>
-
-  <tr>
-    <td>service_namespace</td>
-     <td>No</td>
-    <td>The Kubernetes Namespace to deploy to. Defaults to current context's namespace. </td>
-  </tr>
-
-  <tr>
-    <td>service_operation</td>
-    <td>No</td>
-    <td>The `kn` service operation <code>create</code>, <code>update</code>, <code>apply</code> <code>delete</code>. 
-    Defaults to <code>create</code>.</td>
-  </tr>
-
-  <tr>
-    <td>service_params</td>
-    <td>No</td>
-    <td>The extra service parameters to pass to the service. </td>
   </tr>
 
 </table>
@@ -92,7 +93,7 @@ Kubernetes Cluster with Knative, if you dont have an OpenShift cluster see [try.
     <td>service_url</td>
     <td>
       Knative Service URL of the service created.
-      Will not be present if <code>service_operation</code> input is set to <code>delete</code>
+      Will be empty if <code>command</code> input is set to <code>delete</code>
     </td>
   </tr>
 
@@ -104,7 +105,7 @@ When username and password or token is provided to pull the image, then the acti
 
 ## Passing extra service arguments
 
-This action provides basic options such as namespace, service name, image and operation to be configured. There might be cases where you might want to pass extra arguments to the `kn service <command>`, in those cases you can use `service_params` as shown:
+This action provides basic options such as namespace, service name, image and command to be configured. There might be cases where you might want to pass extra arguments to the `kn service <command>`, in those cases you can use `kn_extra_args` as shown:
 
 Consider an example that you want to add `--max-scale=5` and `--min-scale=1`, then your action snippet will be:
 
@@ -115,7 +116,7 @@ Consider an example that you want to add `--max-scale=5` and `--min-scale=1`, th
   with: 
     service_name: fruits-app
     container_image: "${{ steps.push-tag-to-quay.outputs.registry-path }}"
-    service_params: >
+    kn_extra_args: >
       --max-scale=5
       --min-scale=1
 ```
@@ -148,15 +149,3 @@ Here OpenShift is used as the Kubernetes platform, you can use the [oc-login act
 ```
 
 For a complete example see [the example workflow](./.github/workflows/example.yml).
-
-## Contributing
-
-This is an open source project open to anyone. This project welcomes contributions and suggestions!
-
-## Feedback & Questions
-
-If you discover an issue please file a bug in [GitHub Issues](https://github.com/redhat-actions/kn-service-deploy/issues) and we will fix it as soon as possible.
-
-## License
-
-MIT, See [LICENSE](./LICENSE) for more information.

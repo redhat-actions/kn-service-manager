@@ -13,9 +13,9 @@ kn_command=("kn" "service")
 
 namespace_arg=""
 
-if [[ -n $INPUT_SERVICE_NAMESPACE ]]; then
-    echo "Setting service namespace to '$INPUT_SERVICE_NAMESPACE'"
-    namespace_arg="--namespace=$INPUT_SERVICE_NAMESPACE"
+if [[ -n $INPUT_NAMESPACE ]]; then
+    echo "Setting service namespace to '$INPUT_NAMESPACE'"
+    namespace_arg="--namespace=$INPUT_NAMESPACE"
 else
     echo "No namespace provided"
 fi
@@ -24,8 +24,8 @@ fi
 ##
 #################################################
 
-# Delete kn service if service operation is set to 'delete'
-if [[ $INPUT_SERVICE_OPERATION == "delete" ]];
+# Delete kn service if service command is set to 'delete'
+if [[ $INPUT_COMMAND == "delete" ]];
 then
   appendParams "delete"
   appendParams "$INPUT_SERVICE_NAME"
@@ -54,31 +54,31 @@ then
   is_private_registry=true
 fi
 
-appendParams "$INPUT_SERVICE_OPERATION"
+appendParams "$INPUT_COMMAND"
 appendParams "$INPUT_SERVICE_NAME"
 appendParams $namespace_arg
 
-case $INPUT_SERVICE_OPERATION in
+case $INPUT_COMMAND in
   create | update | apply )
     appendParams "--image=$INPUT_CONTAINER_IMAGE"
     [[ "$is_private_registry" != "false" ]] \
     && appendParams "--pull-secret=$secret_name"
    ;;
   *)
-   printf "❌ %s is not a valid kn service command" "$INPUT_SERVICE_OPERATION"
+   printf "❌ %s is not a valid kn service command" "$INPUT_COMMAND"
   ;;
 esac
 
 # Add force flag in create command
-[[ "$INPUT_SERVICE_OPERATION" == "create" ]] && [[ "$INPUT_FORCE_CREATE" != "false" ]] \
+[[ "$INPUT_COMMAND" == "create" ]] && [[ "$INPUT_FORCE_CREATE" != "false" ]] \
     && appendParams "--force"
 
 # Add an extra parameters to the service
 OLDIFS=$IFS
-if [[ -n $INPUT_SERVICE_PARAMS ]];
+if [[ -n $INPUT_KN_EXTRA_ARGS
 then
   IFS=$'\n'
-  kn_command+=("${INPUT_SERVICE_PARAMS}")
+  kn_command+=("${INPUT_KN_EXTRA_ARGS}")
   IFS=$OLDIFS
 fi
 
