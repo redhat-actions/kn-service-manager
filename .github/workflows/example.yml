@@ -128,9 +128,15 @@ jobs:
         id: kn_service_deploy
         uses: ./kn-service-deploy/
         with:
-          service_name: ${{ env.IMAGE_NAME }}
-          service_operation: update
+          service_name: ${{ env.IMAGE_NAME }} 
           container_image: "${{ steps.push-tag-to-quay.outputs.registry-path }}"
-
+          force_create: "true"
+      
       - name: Show Kn Service URL
         run: echo ${{ steps.kn_service_deploy.outputs.service_url }}
+
+      - name: Knative Service Delete
+        uses: ./kn-service-deploy/
+        with:
+          service_name: ${{ env.IMAGE_NAME }}
+          service_operation: "delete"

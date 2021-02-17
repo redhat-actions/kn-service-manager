@@ -8,36 +8,35 @@ inputs:
   service_name:
     description: "The Knative Service Name"
     required: true
-  service_namespace:
+  namespace:
     description: "The Kubernetes Namespace to deploy to. Defaults to current context's namespace."
     required: false
-  service_operation:
-    description: "The Knative Service Operation"
+  command:
+    description: "The Knative service command, accepted commands are create, update, apply and delete"
     required: false
     default: "create"
   container_image:
     description: "The Knative Service Image"
     required: true
-  service_params:
-    description: "The extra parameter to pass to service"
+  kn_extra_args:
+    description: "Any extra arguments to append to the kn <command>"
     required: false
   registry_user:
-    description: "The registry user to use to create image pull secret"
+    description: "The registry user to use to create the image pull secret"
     required: false
   registry_password:
     description: "The registry user password"
     required: false
+  force_create:
+    description: |
+      "Pass --force to kn create. If the service already exists,
+      the service will be replaced, instead of kn create failing.
+      This input has no effect if command is not create"
+    required: false
+    default: "false"
 outputs:
   service_url:
     description: "The Knative Service URL"
 runs:
   using: "docker"
   image: "Dockerfile"
-  args:
-    - ${{ inputs.service_name }}
-    - ${{ inputs.service_namespace }}
-    - ${{ inputs.service_operation }}
-    - ${{ inputs.container_image }}
-    - ${{ inputs.service_params }}
-    - ${{ inputs.registry_user }}
-    - ${{ inputs.registry_password }}
