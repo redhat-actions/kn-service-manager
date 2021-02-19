@@ -114,7 +114,7 @@ Consider an example that you want to add `--max-scale=5` and `--min-scale=1`, th
   id: kn_service_deploy
   uses: redhat-actions/kn-service-deploy@v1
   with:
-    service_name: fruits-app
+    service_name: getting-started-knative
     container_image: "${{ steps.push-tag-to-quay.outputs.registry-path }}"
     kn_extra_args: >
       --max-scale=5
@@ -144,7 +144,7 @@ Here OpenShift is used as the Kubernetes platform, you can use the [oc-login act
   id: kn_service_deploy
   uses: redhat-actions/kn-service-deploy@v1
   with:
-    service_name: fruits-app
+    service_name: getting-started-knative
     container_image: "${{ env.IMAGE_NAME }}"
 ```
 
