@@ -1,6 +1,6 @@
 # Knative Service Deploy
 
-[![CI checks workflow](https://github.com/redhat-actions/kn-service-deploy/workflows/CI%20Checks/badge.svg)](https://github.com/redhat-actions/kn-service-deploy/actions?query=workflow%3A%22CI+Checks%22)
+[![CI Checks](https://github.com/redhat-actions/kn-service-deploy/workflows/CI%20Checks/badge.svg)](https://github.com/redhat-actions/kn-service-deploy/actions?query=workflow%3A%22CI+Checks%22)
 [![App Build and Push](https://github.com/redhat-actions/kn-service-deploy/workflows/App%20Build%20and%20Push/badge.svg)](https://github.com/redhat-actions/kn-service-deploy/actions?query=workflow%3A%22App+Build+and+Push%22)
 <br></br>
 [![tag badge](https://img.shields.io/github/v/tag/redhat-actions/kn-service-deploy)](https://github.com/redhat-actions/kn-service-deploy/tags)
@@ -26,7 +26,7 @@ Kubernetes Cluster with Knative, if you dont have an OpenShift cluster see [try.
   <tr>
     <td>command</td>
     <td>No</td>
-    <td>The `kn` service command, accepted commands are <code>create</code>, <code>update</code>, <code>apply</code> and <code>delete</code>. 
+    <td>The `kn` service command, accepted commands are <code>create</code>, <code>update</code>, <code>apply</code> and <code>delete</code>.
     Defaults to <code>create</code>.</td>
   </tr>
 
@@ -113,8 +113,8 @@ Consider an example that you want to add `--max-scale=5` and `--min-scale=1`, th
 - name: Knative Service Deploy
   id: kn_service_deploy
   uses: redhat-actions/kn-service-deploy@v1
-  with: 
-    service_name: fruits-app
+  with:
+    service_name: getting-started-knative
     container_image: "${{ steps.push-tag-to-quay.outputs.registry-path }}"
     kn_extra_args: >
       --max-scale=5
@@ -143,8 +143,8 @@ Here OpenShift is used as the Kubernetes platform, you can use the [oc-login act
 - name: Knative Service Deploy
   id: kn_service_deploy
   uses: redhat-actions/kn-service-deploy@v1
-  with: 
-    service_name: fruits-app
+  with:
+    service_name: getting-started-knative
     container_image: "${{ env.IMAGE_NAME }}"
 ```
 

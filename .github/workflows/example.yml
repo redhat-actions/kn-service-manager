@@ -1,27 +1,25 @@
 name: App Build and Push
-on: [push, workflow_dispatch]
+on: [ push, workflow_dispatch ]
 env:
   IMAGE_REGISTRY: "quay.io"
   REGISTRY_USERNAME: "diagrawa"
   REGISTRY_PASSWORD: "${{ secrets.REGISTRY_PASSWORD }}"
-  IMAGE_NAME: "fruits-app"
+  IMAGE_NAME: "getting-started-knative"
   BASE_IMAGE: "registry.access.redhat.com/ubi8/openjdk-11"
-  PROJECT_DIR: "fruits-app"
+  PROJECT_DIR: "getting-started-knative"
   TARGET_DIR: target/
   MVN_REPO_DIR: ~/.m2/repository
 
 jobs:
   checkout-and-build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
 
-      # Checkout example repository
-      - name: Checkout example code
-        id: git_checkout
+      # Checkout project repository
+      - name: Checkout example repository
         uses: actions/checkout@v2
         with:
-          repository: kameshsampath/kn-service-action-example
-          path: ${{ env.PROJECT_DIR }}
+          repository: redhat-actions/quarkus-quickstarts
 
       # If none of these files has changed, we assume that the contents of
       # .m2/repository can be fetched from the cache.
@@ -61,7 +59,7 @@ jobs:
         id: get-jarname
         run: |
           export JAR_NAME="$(basename $(ls ${{ env.PROJECT_DIR }}/target/*.jar))"
-          echo "Fruits App jar is $JAR_NAME"
+          echo "${{ env.PROJECT_DIR }} App jar is $JAR_NAME"
           echo "::set-output name=jarname::$JAR_NAME"
           echo "JAR_NAME=$JAR_NAME" >> $GITHUB_ENV
 
@@ -70,11 +68,11 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ${{ env.PROJECT_DIR }}
-          path: ${{ env.PROJECT_DIR }}
+          path: ./
           if-no-files-found: error
 
   build-and-deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs: [checkout-and-build]
     steps:
 
@@ -83,34 +81,33 @@ jobs:
         uses: actions/checkout@v2
         with:
           path: "kn-service-deploy"
-      
+
       - name: Download working directory
         uses: actions/download-artifact@v2
         with:
           name: ${{ env.PROJECT_DIR }}
 
       - name: Get Commit Metadata
+        uses: redhat-actions/common/commit-data@v1
         id: commit_metadata
-        run: |
-          echo "##[set-output name=sha;]$(echo $(git rev-parse --short $GITHUB_SHA))"
-          echo "##[set-output name=branch;]$(echo ${GITHUB_REF##*/})"
 
       # Build container image using Buildah Action
       - name: Build Image
         uses: redhat-actions/buildah-build@v1
         with:
           image: ${{ env.IMAGE_NAME }}
-          tag: "${{steps.commit_metadata.outputs.branch}}-${{steps.commit_metadata.outputs.sha}}"
+          tag: "${{steps.commit_metadata.outputs.branch}}-${{steps.commit_metadata.outputs.short_sha}}"
           base-image: ${{ env.BASE_IMAGE }}
+          context: ${{ env.PROJECT_DIR }}
           dockerfiles: |
-            ./src/main/docker/Dockerfile.jvm
+            ./${{ env.PROJECT_DIR }}/src/main/docker/Dockerfile.jvm
 
       - name: Push To Quay
         id: push-tag-to-quay
         uses: redhat-actions/push-to-registry@v1
         with:
           image: ${{ env.IMAGE_NAME }}
-          tag: "${{steps.commit_metadata.outputs.branch}}-${{steps.commit_metadata.outputs.sha}}"
+          tag: "${{steps.commit_metadata.outputs.branch}}-${{steps.commit_metadata.outputs.short_sha}}"
           registry: ${{ env.IMAGE_REGISTRY }}/${{ env.REGISTRY_USERNAME }}
           username: ${{ env.REGISTRY_USERNAME }}
           password: ${{ env.REGISTRY_PASSWORD }}
@@ -128,15 +125,9 @@ jobs:
         id: kn_service_deploy
         uses: ./kn-service-deploy/
         with:
-          service_name: ${{ env.IMAGE_NAME }} 
+          service_name: ${{ env.IMAGE_NAME }}
           container_image: "${{ steps.push-tag-to-quay.outputs.registry-path }}"
           force_create: "true"
-      
+
       - name: Show Kn Service URL
         run: echo ${{ steps.kn_service_deploy.outputs.service_url }}
-
-      - name: Knative Service Delete
-        uses: ./kn-service-deploy/
-        with:
-          service_name: ${{ env.IMAGE_NAME }}
-          service_operation: "delete"

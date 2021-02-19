@@ -1,0 +1,28 @@
+name: CI Checks
+on: [ push, pull_request, workflow_dispatch ]
+env:
+  IMAGE_NAME: "kn-service-deploy"
+
+jobs:
+  build-image:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout action directory
+        uses: actions/checkout@v2
+
+      - name: Get Commit Metadata
+        uses: redhat-actions/common/commit-data@v1
+        id: commit_metadata
+
+      # Build container image using Buildah Action
+      - name: Build image of action
+        uses: redhat-actions/buildah-build@v1
+        with:
+          image: ${{ env.IMAGE_NAME }}
+          tag: "${{steps.commit_metadata.outputs.short_sha}}"
+          dockerfiles: |
+            ./Dockerfile
+
+      # Check if image is build
+      - name: Check images created
+        run: buildah images | grep '${{ env.IMAGE_NAME }}'
