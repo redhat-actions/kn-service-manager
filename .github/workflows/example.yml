@@ -1,4 +1,4 @@
-name: App Build and Push
+name: Deploy Knative service
 on: [ push, workflow_dispatch ]
 env:
   IMAGE_REGISTRY: "quay.io"
@@ -12,6 +12,7 @@ env:
 
 jobs:
   checkout-and-build:
+    name: Build
     runs-on: ubuntu-20.04
     steps:
 
@@ -72,6 +73,7 @@ jobs:
           if-no-files-found: error
 
   build-and-deploy:
+    name: Deploy Knative Service
     runs-on: ubuntu-20.04
     needs: [checkout-and-build]
     steps:
