@@ -1,13 +1,13 @@
-# Knative Service Deploy
+# Knative Service Manager
 
-[![CI Checks](https://github.com/redhat-actions/kn-service-deploy/actions/workflows/ci.yml/badge.svg)](https://github.com/redhat-actions/kn-service-deploy/actions/workflows/ci.yml)
-[![Deploy Knative service](https://github.com/redhat-actions/kn-service-deploy/actions/workflows/example.yml/badge.svg)](https://github.com/redhat-actions/kn-service-deploy/actions/workflows/example.yml)
-[![Link checker](https://github.com/redhat-actions/kn-service-deploy/actions/workflows/link_check.yml/badge.svg)](https://github.com/redhat-actions/kn-service-deploy/actions/workflows/link_check.yml)
+[![CI Checks](https://github.com/redhat-actions/kn-service-manager/actions/workflows/ci.yml/badge.svg)](https://github.com/redhat-actions/kn-service-manager/actions/workflows/ci.yml)
+[![Create Knative service](https://github.com/redhat-actions/kn-service-manager/actions/workflows/example.yml/badge.svg)](https://github.com/redhat-actions/kn-service-manager/actions/workflows/example.yml)
+[![Link checker](https://github.com/redhat-actions/kn-service-manager/actions/workflows/link_check.yml/badge.svg)](https://github.com/redhat-actions/kn-service-manager/actions/workflows/link_check.yml)
 <br></br>
-[![tag badge](https://img.shields.io/github/v/tag/redhat-actions/kn-service-deploy)](https://github.com/redhat-actions/kn-service-deploy/tags)
-[![license badge](https://img.shields.io/github/license/redhat-actions/kn-service-deploy)](./LICENSE)
+[![tag badge](https://img.shields.io/github/v/tag/redhat-actions/kn-service-manager)](https://github.com/redhat-actions/kn-service-manager/tags)
+[![license badge](https://img.shields.io/github/license/redhat-actions/kn-service-manager)](./LICENSE)
 
-**kn-service-deploy** is a GitHub Action to manage [Knative Services](https://kn.dev) on a Kubernetes cluster, using the [Knative Client](https://github.com/knative/client).
+**kn-service-manager** is a GitHub Action to manage [Knative Services](https://kn.dev) on a Kubernetes cluster, using the [Knative Client](https://github.com/knative/client).
 
 ## Prerequisites
 
@@ -37,26 +37,13 @@ When a username and a token or password are provided to pull the image, the acti
 
 ## Example
 
-The example below shows how the `kn-service-deploy` action can be used to deploy a Knative service to OpenShift.
+The example below shows how the `kn-service-manager` action can be used to deploy a Knative service to Kubernetes.
 
 You must be logged into your Kubernetes cluster before running this action. If you are using OpenShift, use [oc-login](https://github.com/redhat-actions/oc-login).
 
 ```yaml
-# Login into the Openshift cluster
-# with your username and password/token
-- name: Authenticate and set context
-  id: oc_login
-  uses: redhat-actions/oc-login@v1
-  with:
-    openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
-    openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
-    insecure_skip_tls_verify: true
-    namespace: ${{ env.NAMESPACE }}
-
-# Deploy knative service using container image
-- name: Knative Service Deploy
-  id: kn_service_deploy
-  uses: redhat-actions/kn-service-deploy@v1
+- name: Create Knative Service
+  uses: redhat-actions/kn-service-manager@v1
   with:
     service_name: getting-started-knative
     container_image: ${{ env.IMAGE_NAME }}
@@ -71,9 +58,8 @@ This action provides basic options such as namespace, service name, image and th
 For example, if you want to add `--min-scale=1` and`--max-scale=5`, then your action snippet will be:
 
 ```yaml
-- name: Knative Service Deploy
-  id: kn_service_deploy
-  uses: redhat-actions/kn-service-deploy@v1
+- name: Create Knative Service
+  uses: redhat-actions/kn-service-manager@v1
   with:
     service_name: getting-started-knative
     container_image: "${{ steps.push-to-quay.outputs.registry-path }}"

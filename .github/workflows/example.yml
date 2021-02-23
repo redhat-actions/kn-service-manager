@@ -1,4 +1,4 @@
-name: Deploy Knative service
+name: Create Knative service
 on: [ push, workflow_dispatch ]
 env:
   IMAGE_REGISTRY: "quay.io"
@@ -72,17 +72,17 @@ jobs:
           path: ./
           if-no-files-found: error
 
-  build-and-deploy:
+  build-and-deploy-images:
     name: Deploy Knative Service
     runs-on: ubuntu-20.04
-    needs: [checkout-and-build]
+    needs: [ checkout-and-build ]
     steps:
 
       # Checkout Knative service deploy action github repository
       - name: Checkout Knative service deploy action
         uses: actions/checkout@v2
         with:
-          path: "kn-service-deploy"
+          path: "kn-service-manager"
 
       - name: Download working directory
         uses: actions/download-artifact@v2
@@ -98,7 +98,7 @@ jobs:
         uses: redhat-actions/buildah-build@v1
         with:
           image: ${{ env.IMAGE_NAME }}
-          tag: "${{steps.commit_metadata.outputs.branch}}-${{steps.commit_metadata.outputs.short_sha}}"
+          tag: "${{ steps.commit_metadata.outputs.branch }}-${{ steps.commit_metadata.outputs.short_sha }}"
           base-image: ${{ env.BASE_IMAGE }}
           context: ${{ env.PROJECT_DIR }}
           dockerfiles: |
@@ -109,7 +109,7 @@ jobs:
         uses: redhat-actions/push-to-registry@v1
         with:
           image: ${{ env.IMAGE_NAME }}
-          tag: "${{steps.commit_metadata.outputs.branch}}-${{steps.commit_metadata.outputs.short_sha}}"
+          tag: "${{ steps.commit_metadata.outputs.branch }}-${{ steps.commit_metadata.outputs.short_sha }}"
           registry: ${{ env.IMAGE_REGISTRY }}/${{ env.REGISTRY_USERNAME }}
           username: ${{ env.REGISTRY_USERNAME }}
           password: ${{ env.REGISTRY_PASSWORD }}
@@ -125,7 +125,7 @@ jobs:
 
       - name: Knative Service Deploy
         id: kn_service_deploy
-        uses: ./kn-service-deploy/
+        uses: ./kn-service-manager/
         with:
           service_name: ${{ env.IMAGE_NAME }}
           container_image: "${{ steps.push-tag-to-quay.outputs.registry-path }}"

@@ -1,5 +1,5 @@
 name: "Knative Service Deploy"
-description: "Creating Knative Services using kn"
+description: "Create and manage Knative Services"
 author: 'Red Hat'
 branding:
   icon: circle

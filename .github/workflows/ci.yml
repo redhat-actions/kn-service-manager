@@ -1,7 +1,7 @@
 name: CI Checks
 on: [ push, pull_request, workflow_dispatch ]
 env:
-  IMAGE_NAME: "kn-service-deploy"
+  IMAGE_NAME: "kn-service-manager"
 
 jobs:
   build-image:
