@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-set -e 
-set -o pipefail 
+set -e
+set -o pipefail
 
 ##############################################################
-## appendParams appends params to the kn service 
+## appendParams appends params to the kn service
 ##############################################################
 function appendParams(){
    kn_command+=("$1")
@@ -30,7 +30,7 @@ then
   appendParams "delete"
   appendParams "$INPUT_SERVICE_NAME"
   echo "⏳ Running: ${kn_command[*]} "
-  echo "⏳ Deleting $INPUT_SERVICE_NAME service"
+  echo "🗑️ Deleting $INPUT_SERVICE_NAME service"
   ${kn_command[*]}
   echo "✅ $INPUT_SERVICE_NAME service successfully deleted"
   exit 0
@@ -41,11 +41,11 @@ secret_name="$docker_server.pull-secret"
 is_private_registry=false
 if [[ $INPUT_REGISTRY_USER != "" ]] && [[ $INPUT_REGISTRY_PASSWORD != "" ]];
 then
- # delete the old secret if exist, that ensures 
+ # delete the old secret if exist, that ensures
  # new values are updated during each run
  oc delete secret $namespace_arg "$secret_name" || true
  # create docker registry secret to allow pull
- # from private container registry 
+ # from private container registry
  oc create secret docker-registry "$secret_name" \
    $namespace_arg \
    --docker-username="$INPUT_REGISTRY_USER" \
@@ -85,7 +85,7 @@ fi
 echo "⏳ Running: ${kn_command[*]} "
 ${kn_command[*]}
 
-# After successful service creation extract the service url 
+# After successful service creation extract the service url
 # and set that as output to the action
 echo "✅ $INPUT_SERVICE_NAME service created successfully."
 service_url=$(kn service describe $namespace_arg "$INPUT_SERVICE_NAME" -o url)
