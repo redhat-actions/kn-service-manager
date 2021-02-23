@@ -1,6 +1,6 @@
-name: "Knative Service Deploy"
-description: "Create and manage Knative Services"
-author: 'Red Hat'
+name: Knative Service Manager
+description: Create and manage Knative Services
+author: Red Hat
 branding:
   icon: circle
   color: red

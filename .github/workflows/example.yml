@@ -31,7 +31,7 @@ jobs:
 
       # Download the m2 repository from the cache to speed up the build.
       - name: Check for Maven cache
-        id: check-mvn-cache
+        id: check_mvn_cache
         uses: actions/cache@v2
         with:
           path: ${{ env.MVN_REPO_DIR }}
@@ -49,7 +49,7 @@ jobs:
 
       # If there was no cache hit above, store the output into the cache now.
       - name: Save Maven repo into cache
-        if: ${{ steps.check-mvn-cache.outputs.cache-hit }} != 'true'
+        if: ${{ steps.check_mvn_cache.outputs.cache-hit }} != 'true'
         uses: actions/cache@v2
         with:
           path: ${{ env.MVN_REPO_DIR }}
@@ -57,7 +57,6 @@ jobs:
 
       #  Store the output jar into the env for reuse below.
       - name: Get jar filename
-        id: get-jarname
         run: |
           export JAR_NAME="$(basename $(ls ${{ env.PROJECT_DIR }}/target/*.jar))"
           echo "${{ env.PROJECT_DIR }} App jar is $JAR_NAME"
@@ -95,27 +94,27 @@ jobs:
 
       # Build container image using Buildah Action
       - name: Build Image
-        uses: redhat-actions/buildah-build@v1
+        id: buildah_build
+        uses: redhat-actions/buildah-build@v2
         with:
           image: ${{ env.IMAGE_NAME }}
-          tag: "${{ steps.commit_metadata.outputs.branch }}-${{ steps.commit_metadata.outputs.short_sha }}"
+          tags: "${{ steps.commit_metadata.outputs.branch }}-${{ steps.commit_metadata.outputs.short_sha }}"
           base-image: ${{ env.BASE_IMAGE }}
           context: ${{ env.PROJECT_DIR }}
           dockerfiles: |
             ./${{ env.PROJECT_DIR }}/src/main/docker/Dockerfile.jvm
 
       - name: Push To Quay
-        id: push-tag-to-quay
-        uses: redhat-actions/push-to-registry@v1
+        id: push_tag_to_quay
+        uses: redhat-actions/push-to-registry@v2
         with:
           image: ${{ env.IMAGE_NAME }}
-          tag: "${{ steps.commit_metadata.outputs.branch }}-${{ steps.commit_metadata.outputs.short_sha }}"
+          tags: ${{ steps.buildah_build.outputs.tags }}
           registry: ${{ env.IMAGE_REGISTRY }}/${{ env.REGISTRY_USERNAME }}
           username: ${{ env.REGISTRY_USERNAME }}
           password: ${{ env.REGISTRY_PASSWORD }}
 
       - name: Login into OpenShift Cluster
-        id: oc_login
         uses: redhat-actions/oc-login@v1
         with:
           openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
@@ -128,7 +127,7 @@ jobs:
         uses: ./kn-service-manager/
         with:
           service_name: ${{ env.IMAGE_NAME }}
-          container_image: "${{ steps.push-tag-to-quay.outputs.registry-path }}"
+          container_image: "${{ steps.push_tag_to_quay.outputs.registry-path }}"
           force_create: "true"
 
       - name: Show Kn Service URL
