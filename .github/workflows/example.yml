@@ -92,13 +92,25 @@ jobs:
         uses: redhat-actions/common/commit-data@v1
         id: commit_metadata
 
+      - name: Determine image tag
+        shell: bash
+        run: |
+          export IMG_TAGS=latest
+          export GIT_TAG="${{ steps.commit_metadata.outputs.tag }}"
+          if [[ -n "$GIT_TAG" ]]; then
+            IMG_TAGS="$GIT_TAG"
+          else
+            IMG_TAGS="${{ steps.commit_metadata.outputs.short_sha }}"
+          fi
+          echo "IMG_TAGS=$IMG_TAGS" >> $GITHUB_ENV
+
       # Build container image using Buildah Action
       - name: Build Image
         id: buildah_build
         uses: redhat-actions/buildah-build@v2
         with:
           image: ${{ env.IMAGE_NAME }}
-          tags: "${{ steps.commit_metadata.outputs.branch }}-${{ steps.commit_metadata.outputs.short_sha }}"
+          tags: ${{ env.IMG_TAGS }}
           base-image: ${{ env.BASE_IMAGE }}
           context: ${{ env.PROJECT_DIR }}
           dockerfiles: |
@@ -126,7 +138,7 @@ jobs:
         id: kn_service_deploy
         uses: ./kn-service-manager/
         with:
-          service_name: "${{ env.IMAGE_NAME }}-${{ steps.commit_metadata.outputs.short_sha }}"
+          service_name: "${{ env.IMAGE_NAME }}-${{ env.IMG_TAGS }}"
           container_image: "${{ steps.push_tag_to_quay.outputs.registry-path }}"
 
       - name: Show Kn Service URL
@@ -149,5 +161,5 @@ jobs:
         uses: ./kn-service-manager/
         if: always()
         with:
-          service_name: "${{ env.IMAGE_NAME }}-${{ steps.commit_metadata.outputs.short_sha }}"
+          service_name: "${{ env.IMAGE_NAME }}-${{ env.IMG_TAGS }}"
           command: delete
