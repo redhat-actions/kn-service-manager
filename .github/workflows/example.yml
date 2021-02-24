@@ -122,13 +122,32 @@ jobs:
           insecure_skip_tls_verify: true
           namespace: diagrawa-code
 
-      - name: Knative Service Deploy
+      - name: Deploy Knative Service
         id: kn_service_deploy
         uses: ./kn-service-manager/
         with:
           service_name: ${{ env.IMAGE_NAME }}
           container_image: "${{ steps.push_tag_to_quay.outputs.registry-path }}"
-          force_create: "true"
 
       - name: Show Kn Service URL
         run: echo ${{ steps.kn_service_deploy.outputs.service_url }}
+
+      # Perform a (very) basic integration test.
+      # This step is retried since the time to pull the image and start the pod can vary.
+      - name: Test project is running
+        uses: nick-invision/retry@v2.2.0
+        with:
+          timeout_seconds: 3
+          retry_wait_seconds: 10
+          max_attempts: 10
+          warning_on_retry: false
+          # Just check that the root endpoint returns a success status (-f flag).
+          command: curl -sSfLi ${{ steps.kn_service_deploy.outputs.service_url }}
+
+      # Clean up the resources we deployed, even if there was an error above.
+      - name: Delete deployed knative service
+        uses: ./kn-service-manager/
+        if: always()
+        with:
+          service_name: ${{ env.IMAGE_NAME }}
+          command: delete
