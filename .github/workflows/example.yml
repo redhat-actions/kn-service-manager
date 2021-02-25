@@ -91,6 +91,8 @@ jobs:
       - name: Get Commit Metadata
         uses: redhat-actions/common/commit-data@v1
         id: commit_metadata
+        with:
+          working_directory: "kn-service-manager"
 
       - name: Determine image tag
         shell: bash
