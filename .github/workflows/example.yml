@@ -100,11 +100,13 @@ jobs:
           export IMG_TAGS=latest
           export GIT_TAG="${{ steps.commit_metadata.outputs.tag }}"
           if [[ -n "$GIT_TAG" ]]; then
-            IMG_TAGS="$GIT_TAG"
+            IMG_TAGS=$GIT_TAG
           else
             IMG_TAGS="${{ steps.commit_metadata.outputs.short_sha }}"
           fi
-          echo "IMG_TAGS=$IMG_TAGS" >> $GITHUB_ENV
+          IMG_TAGS=$(echo $IMG_TAGS | tr -d -c '[:alnum:]_-' | tr '[:upper:]' '[:lower:]')
+          echo "IMG_TAGS=$IMG_TAGS" | tee -a $GITHUB_ENV
+          
 
       # Build container image using Buildah Action
       - name: Build Image
