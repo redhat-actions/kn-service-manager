@@ -11,7 +11,8 @@
 
 ## Prerequisites
 
-A Kubernetes Cluster with [Knative installed](https://knative.dev/docs/install/). To try an OpenShift cluster, visit [try.openshift.com](https://try.openshift.com) or sign up for our [Developer Sandbox](https://developers.redhat.com/developer-sandbox).
+A Kubernetes Cluster with [Knative installed](https://knative.dev/docs/install/). On OpenShift, this is usually provided through the [Red Hat OpenShift Serverless operator](https://www.openshift.com/learn/topics/serverless). To try an OpenShift cluster, visit [try.openshift.com](https://try.openshift.com).
+
 
 ## Action Inputs
 
