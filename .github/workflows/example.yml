@@ -1,5 +1,10 @@
 name: Create Knative service
-on: [ push, workflow_dispatch ]
+on:
+  push:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'  # every day at midnight
+
 env:
   IMAGE_REGISTRY: "quay.io"
   REGISTRY_USERNAME: "diagrawa"
@@ -106,7 +111,7 @@ jobs:
           fi
           IMG_TAGS=$(echo $IMG_TAGS | tr -d -c '[:alnum:]_-' | tr '[:upper:]' '[:lower:]')
           echo "IMG_TAGS=$IMG_TAGS" | tee -a $GITHUB_ENV
-          
+
 
       # Build container image using Buildah Action
       - name: Build Image
