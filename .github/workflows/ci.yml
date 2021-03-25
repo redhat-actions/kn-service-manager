@@ -1,5 +1,11 @@
 name: CI Checks
-on: [ push, pull_request, workflow_dispatch ]
+on:
+  push:
+  workflow_dispatch:
+  pull_request:
+  schedule:
+    - cron: '0 0 * * *'  # every day at midnight
+
 env:
   IMAGE_NAME: "kn-service-manager"
 
