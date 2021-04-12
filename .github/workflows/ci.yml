@@ -22,10 +22,10 @@ jobs:
 
       # Build container image using Buildah Action
       - name: Build image of action
-        uses: redhat-actions/buildah-build@v1
+        uses: redhat-actions/buildah-build@v2
         with:
           image: ${{ env.IMAGE_NAME }}
-          tag: "${{steps.commit_metadata.outputs.short_sha}}"
+          tags: "${{steps.commit_metadata.outputs.short_sha}}"
           dockerfiles: |
             ./Dockerfile
 
