@@ -1,9 +1,9 @@
 name: Create Knative service
 on:
-  push:
+  # push:
   workflow_dispatch:
-  schedule:
-    - cron: '0 0 * * *'  # every day at midnight
+  # schedule:
+  #   - cron: '0 0 * * *'  # every day at midnight
 
 env:
   IMAGE_REGISTRY: "quay.io"

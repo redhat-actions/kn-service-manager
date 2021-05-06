@@ -1,9 +1,8 @@
 # Knative Service Manager
 
 [![CI Checks](https://github.com/redhat-actions/kn-service-manager/actions/workflows/ci.yml/badge.svg)](https://github.com/redhat-actions/kn-service-manager/actions/workflows/ci.yml)
-[![Create Knative service](https://github.com/redhat-actions/kn-service-manager/actions/workflows/example.yml/badge.svg)](https://github.com/redhat-actions/kn-service-manager/actions/workflows/example.yml)
 [![Link checker](https://github.com/redhat-actions/kn-service-manager/actions/workflows/link_check.yml/badge.svg)](https://github.com/redhat-actions/kn-service-manager/actions/workflows/link_check.yml)
-<br></br>
+<!-- [![Create Knative service](https://github.com/redhat-actions/kn-service-manager/actions/workflows/example.yml/badge.svg)](https://github.com/redhat-actions/kn-service-manager/actions/workflows/example.yml) -->
 [![tag badge](https://img.shields.io/github/v/tag/redhat-actions/kn-service-manager)](https://github.com/redhat-actions/kn-service-manager/tags)
 [![license badge](https://img.shields.io/github/license/redhat-actions/kn-service-manager)](./LICENSE)
 
