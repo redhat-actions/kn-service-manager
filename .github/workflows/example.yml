@@ -1,20 +1,19 @@
 name: Create Knative service
 on:
-  # push:
+  push:
   workflow_dispatch:
-  # schedule:
-  #   - cron: '0 0 * * *'  # every day at midnight
+  schedule:
+    - cron: '0 0 * * *'  # every day at midnight
 
 env:
-  IMAGE_REGISTRY: "quay.io"
-  REGISTRY_USERNAME: "diagrawa"
-  REGISTRY_PASSWORD: "${{ secrets.REGISTRY_PASSWORD }}"
-  IMAGE_NAME: "getting-started-knative"
-  BASE_IMAGE: "registry.access.redhat.com/ubi8/openjdk-11"
-  PROJECT_DIR: "getting-started-knative"
+  IMAGE_REGISTRY: quay.io
+  IMAGE_NAME: getting-started-knative
+  IMAGE_NAMESPACE: redhat-github-actions
+  BASE_IMAGE: registry.access.redhat.com/ubi8/openjdk-11
+  PROJECT_DIR: getting-started-knative
   TARGET_DIR: target/
   MVN_REPO_DIR: ~/.m2/repository
-  TEST_NAMESPACE: github-actions-bot-dev
+  TEST_NAMESPACE: diagrawa-dev
 
 jobs:
   checkout-and-build:
@@ -132,14 +131,14 @@ jobs:
         with:
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ steps.buildah_build.outputs.tags }}
-          registry: ${{ env.IMAGE_REGISTRY }}/${{ env.REGISTRY_USERNAME }}
-          username: ${{ env.REGISTRY_USERNAME }}
-          password: ${{ env.REGISTRY_PASSWORD }}
+          registry: ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAMESPACE }}
+          username: ${{ secrets.REGISTRY_USER }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
 
       - name: Login into OpenShift Cluster
         uses: redhat-actions/oc-login@v1
         with:
-          openshift_server_url: ${{ secrets.OPENSHIFT_URL }}
+          openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
           openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
           insecure_skip_tls_verify: true
           namespace: ${{ env.TEST_NAMESPACE }}
