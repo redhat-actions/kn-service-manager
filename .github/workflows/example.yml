@@ -13,7 +13,7 @@ env:
   PROJECT_DIR: getting-started-knative
   TARGET_DIR: target/
   MVN_REPO_DIR: ~/.m2/repository
-  TEST_NAMESPACE: diagrawa-dev
+  TEST_NAMESPACE: crt-redhat-github-actions-bot-dev
 
 jobs:
   checkout-and-build:
