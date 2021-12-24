@@ -147,7 +147,7 @@ jobs:
         id: kn_service_deploy
         uses: ./kn-service-manager/
         with:
-          service_name: "${{ env.IMAGE_NAME }}-${{ env.IMG_TAGS }}"
+          service_name: "test-service"
           container_image: "${{ steps.push_tag_to_quay.outputs.registry-path }}"
 
       - name: Show Kn Service URL
@@ -170,5 +170,5 @@ jobs:
         uses: ./kn-service-manager/
         if: always()
         with:
-          service_name: "${{ env.IMAGE_NAME }}-${{ env.IMG_TAGS }}"
+          service_name: "test-service"
           command: delete
